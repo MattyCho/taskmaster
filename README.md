@@ -18,6 +18,6 @@ A simple task managing app built for Android Studio practice. The app contains 3
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
 
-![addTask](screenshots/addTask.png)
+![addTask](screenshots/AddTask.png)
 
-![allTasks](screenshots/allTasks.png)
+![allTasks](screenshots/AllTasks.png)
