@@ -24,8 +24,23 @@ A simple task managing app built for Android Studio practice. The app contains 3
 - `Homepage` now has 3 hardcoded tasks with a button that takes it to a `TaskDetail` page.
 - `Homepage` also has a wrench icon that takes the user to the settings page.
 
+### [1.0.2] - 2021-10-27
+### Added
+- Implemented a `RecyclerView` to render a task list on the homepage
+- Created a fragment and `ViewAdapter` to support the `RecyclerView`.
+- `Task` model which takes in a title, description, state, and date.
+
+### Changed
+- Homepage now displays a hardcoded list which implements a `RecyclerView`.
+- Clicking on a task in the list takes you to the `TaskDetail` page with the appropriate title.
+
+### Removed
+- Hardcoded list and buttons on the homepage.
+
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
+
+![homepage v3](screenshots/Homepagev3.png)
 
 ![addTask](screenshots/AddTask.png)
 
