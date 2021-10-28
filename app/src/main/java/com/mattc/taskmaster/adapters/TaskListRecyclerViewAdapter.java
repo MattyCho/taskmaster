@@ -1,6 +1,6 @@
 package com.mattc.taskmaster.adapters;
 
-import static com.mattc.taskmaster.activities.MainActivity.TASK_TITLE_EXTRA_STRING;
+import static com.mattc.taskmaster.activities.MainActivity.TASK_ID_EXTRA_STRING;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -29,6 +29,14 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         this.taskList = taskList;
     }
 
+    public List<Task> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(List<Task> taskList) {
+        this.taskList = taskList;
+    }
+
     @NonNull
     @Override
     public TaskListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -46,7 +54,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
 
         holder.itemView.setOnClickListener(view -> {
             Intent taskDetailIntent = new Intent(associatedActivity, TaskDetailActivity.class);
-            taskDetailIntent.putExtra(TASK_TITLE_EXTRA_STRING, task.taskTitle);
+            taskDetailIntent.putExtra(TASK_ID_EXTRA_STRING, task.id);
             associatedActivity.startActivity(taskDetailIntent);
         });
     }
