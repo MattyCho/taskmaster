@@ -37,6 +37,15 @@ A simple task managing app built for Android Studio practice. The app contains 3
 ### Removed
 - Hardcoded list and buttons on the homepage.
 
+### [1.0.3] - 2021-10-28
+### Added
+- Room implementation for database storage.
+- Created a Database, DAO, and a converter.
+- Adding a task now adds it to a database which is displayed on the homepage.
+
+### Changed
+- Task Status property has been changed to an enum instead of a string.
+
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
 
