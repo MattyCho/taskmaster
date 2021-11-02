@@ -3,6 +3,7 @@ package com.mattc.taskmaster.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,25 +11,26 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amplifyframework.api.graphql.model.ModelMutation;
+import com.amplifyframework.core.Amplify;
+import com.amplifyframework.core.model.temporal.Temporal;
+import com.amplifyframework.datastore.generated.model.Task;
 import com.mattc.taskmaster.R;
-import com.mattc.taskmaster.models.Task;
 import com.mattc.taskmaster.models.TaskStatusEnum;
 
 import java.util.Date;
 
 public class AddATaskActivity extends AppCompatActivity {
 
+    public final static String TAG = "mattyc_taskmaster_addataskactivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_atask);
-//
-//        taskDatabase = Room.databaseBuilder(getApplicationContext(), TaskDatabase.class, DATABASE_INSTANCE_NAME)
-//                .allowMainThreadQueries()
-//                .build();
 
+        // TODO: fix task counter
         TextView totalTaskTextView = findViewById(R.id.totalTaskTextView);
-//        totalTaskTextView.setText("Total Tasks: " + taskDatabase.taskDao().findAll().size());
 
         // Spinner Stuff
         Spinner taskStatusSpinner = findViewById(R.id.taskStatusSpinner);
@@ -41,14 +43,24 @@ public class AddATaskActivity extends AppCompatActivity {
             EditText taskDescriptionEditText = findViewById(R.id.taskDescriptionEditText);
             String taskTitleEditTextString = taskTitleEditText.getText().toString();
             String taskDescriptionEditTextString = taskDescriptionEditText.getText().toString();
-            TaskStatusEnum taskStatus = TaskStatusEnum.valueOf(taskStatusSpinner.getSelectedItem().toString());
+            String taskStatus = taskStatusSpinner.getSelectedItem().toString();
+            String taskDateString = com.amazonaws.util.DateUtils.formatISO8601Date(new Date());
 
-            Task newTask = new Task(taskTitleEditTextString, taskDescriptionEditTextString, new Date());
-            newTask.taskStatus = taskStatus;
-//            long newTaskId = taskDatabase.taskDao().insert(newTask);
-            long newTaskId = 0;
+            // use builder to create new Task
+            Task newTask = Task.builder()
+                    .taskTitle(taskTitleEditTextString)
+                    .taskDescription(taskDescriptionEditTextString)
+                    .taskStatus(taskStatus)
+                    .taskDate(new Temporal.DateTime(taskDateString))
+                    .build();
 
-//            Toast.makeText(AddATaskActivity.this, "Shopping Item saved! Id: " + newTaskId, Toast.LENGTH_SHORT).show();
+            Amplify.API.mutate(
+                    ModelMutation.create(newTask),
+                    success -> Log.i(TAG, "Succeeded"),
+                    failure -> Log.i(TAG, "Failed")
+            );
+
+            Toast.makeText(AddATaskActivity.this, "Task Saved!", Toast.LENGTH_SHORT).show();
         });
     }
 

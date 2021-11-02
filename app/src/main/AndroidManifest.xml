@@ -3,6 +3,7 @@
     package="com.mattc.taskmaster">
 
     <application
+        android:name=".TaskmasterApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

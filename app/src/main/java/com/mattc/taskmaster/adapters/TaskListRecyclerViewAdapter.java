@@ -12,9 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amplifyframework.datastore.generated.model.Task;
 import com.mattc.taskmaster.R;
 import com.mattc.taskmaster.activities.TaskDetailActivity;
-import com.mattc.taskmaster.models.Task;
 
 import java.util.List;
 
@@ -50,11 +50,16 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         Task task = taskList.get(position);
         View taskFragment = holder.itemView;
         TextView taskFragmentTextView = taskFragment.findViewById(R.id.taskFragmentTextView);
-        taskFragmentTextView.setText(task.toString());
+        // TODO: Change setText() to make it look nicer
+        String taskString = "Task Title: " + task.getTaskTitle() +
+                "\nDate Added: " + task.getTaskDate() +
+                "\nTask Description: " + task.getTaskDescription() +
+                "\nTask Status: " + task.getTaskStatus() +"\n";
+        taskFragmentTextView.setText(taskString);
 
         holder.itemView.setOnClickListener(view -> {
             Intent taskDetailIntent = new Intent(associatedActivity, TaskDetailActivity.class);
-            taskDetailIntent.putExtra(TASK_ID_EXTRA_STRING, task.id);
+            taskDetailIntent.putExtra(TASK_ID_EXTRA_STRING, task.getId());
             associatedActivity.startActivity(taskDetailIntent);
         });
     }

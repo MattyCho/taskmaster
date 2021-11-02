@@ -55,6 +55,14 @@ A simple task managing app built for Android Studio practice. The app contains 3
 ### Removed
 - Removed Room and database storage to prepare for AWS Amplify.
 
+## [1.1.0] - 2021-11-2
+### Added
+- Implemented AWS Amplify and DynamoDB for cloud storage of task data.
+
+## Changed
+- Reworked all database related code to use AWS Amplify instead of Room.
+- Task data now pulls information from DynamoDB.
+
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
 

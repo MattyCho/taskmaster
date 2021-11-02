@@ -2,9 +2,10 @@
 query GetTask($id: ID!) {
   getTask(id: $id) {
     id
-    title
-    description
-    status
+    taskTitle
+    taskDescription
+    taskStatus
+    taskDate
     createdAt
     updatedAt
   }
@@ -17,32 +18,10 @@ query ListTasks(
   listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
-      title
-      description
-      status
-      createdAt
-      updatedAt
-    }
-    nextToken
-  }
-}
-query GetNote($id: ID!) {
-  getNote(id: $id) {
-    id
-    content
-    createdAt
-    updatedAt
-  }
-}
-query ListNotes(
-  $filter: ModelNoteFilterInput
-  $limit: Int
-  $nextToken: String
-) {
-  listNotes(filter: $filter, limit: $limit, nextToken: $nextToken) {
-    items {
-      id
-      content
+      taskTitle
+      taskDescription
+      taskStatus
+      taskDate
       createdAt
       updatedAt
     }

@@ -5,9 +5,10 @@ mutation CreateTask(
 ) {
   createTask(input: $input, condition: $condition) {
     id
-    title
-    description
-    status
+    taskTitle
+    taskDescription
+    taskStatus
+    taskDate
     createdAt
     updatedAt
   }
@@ -18,9 +19,10 @@ mutation UpdateTask(
 ) {
   updateTask(input: $input, condition: $condition) {
     id
-    title
-    description
-    status
+    taskTitle
+    taskDescription
+    taskStatus
+    taskDate
     createdAt
     updatedAt
   }
@@ -31,42 +33,10 @@ mutation DeleteTask(
 ) {
   deleteTask(input: $input, condition: $condition) {
     id
-    title
-    description
-    status
-    createdAt
-    updatedAt
-  }
-}
-mutation CreateNote(
-  $input: CreateNoteInput!
-  $condition: ModelNoteConditionInput
-) {
-  createNote(input: $input, condition: $condition) {
-    id
-    content
-    createdAt
-    updatedAt
-  }
-}
-mutation UpdateNote(
-  $input: UpdateNoteInput!
-  $condition: ModelNoteConditionInput
-) {
-  updateNote(input: $input, condition: $condition) {
-    id
-    content
-    createdAt
-    updatedAt
-  }
-}
-mutation DeleteNote(
-  $input: DeleteNoteInput!
-  $condition: ModelNoteConditionInput
-) {
-  deleteNote(input: $input, condition: $condition) {
-    id
-    content
+    taskTitle
+    taskDescription
+    taskStatus
+    taskDate
     createdAt
     updatedAt
   }
