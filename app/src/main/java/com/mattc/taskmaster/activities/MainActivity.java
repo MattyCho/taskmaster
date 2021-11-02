@@ -5,7 +5,6 @@ import static com.mattc.taskmaster.activities.SettingsActivity.USERNAME_KEY;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,11 +17,9 @@ import android.widget.TextView;
 
 import com.mattc.taskmaster.R;
 import com.mattc.taskmaster.adapters.TaskListRecyclerViewAdapter;
-import com.mattc.taskmaster.database.TaskDatabase;
 import com.mattc.taskmaster.models.Task;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     public final static String DATABASE_INSTANCE_NAME = "mattyc_taskmaster_db";
     protected static SharedPreferences sharedPreferences;
     protected static Resources res;
-    TaskDatabase taskDatabase;
     TaskListRecyclerViewAdapter taskListRecyclerViewAdapter;
 
     @Override
@@ -41,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Build Database
-        taskDatabase = Room.databaseBuilder(getApplicationContext(), TaskDatabase.class, DATABASE_INSTANCE_NAME)
-                .allowMainThreadQueries()
-                .build();
+//        taskDatabase = Room.databaseBuilder(getApplicationContext(), TaskDatabase.class, DATABASE_INSTANCE_NAME)
+//                .allowMainThreadQueries()
+//                .build();
 
         // Set up RecyclerView and Layout Manager
         RecyclerView taskListRecyclerView = findViewById(R.id.taskListRecyclerView);
@@ -88,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        List<Task> taskList2 = taskDatabase.taskDao().findAll();
+//        List<Task> taskList2 = taskDatabase.taskDao().findAll();
+        List<Task> taskList2 = new ArrayList<>();
         taskListRecyclerViewAdapter.setTaskList(taskList2);
         taskListRecyclerViewAdapter.notifyDataSetChanged();
 

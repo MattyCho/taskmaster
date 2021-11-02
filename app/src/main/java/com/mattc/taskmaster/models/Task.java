@@ -1,16 +1,14 @@
 package com.mattc.taskmaster.models;
 
 import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.Date;
 
-@Entity
+//@Entity
 public class Task {
-    @PrimaryKey(autoGenerate = true)
+//    @PrimaryKey(autoGenerate = true)
     public long id;
     public String taskTitle;
     public String taskDescription;
