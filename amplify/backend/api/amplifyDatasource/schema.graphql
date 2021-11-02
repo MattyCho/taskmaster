@@ -1,10 +1,14 @@
 type Task @model {
-  id: ID!
-  title: String!
-  description: String
-  status: String
+    id: ID!
+    taskTitle: String
+    taskDescription: String
+    taskStatus: TaskStatusEnum
+    taskDate: AWSDateTime
 }
-type Note @model {
-  id: ID!
-  content: String!
+
+enum TaskStatusEnum {
+    NEW,
+    ASSIGNED,
+    IN_PROGRESS,
+    COMPLETE
 }

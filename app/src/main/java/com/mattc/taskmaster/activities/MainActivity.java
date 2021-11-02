@@ -11,13 +11,16 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amplifyframework.api.graphql.model.ModelQuery;
+import com.amplifyframework.core.Amplify;
+import com.amplifyframework.datastore.generated.model.Task;
 import com.mattc.taskmaster.R;
 import com.mattc.taskmaster.adapters.TaskListRecyclerViewAdapter;
-import com.mattc.taskmaster.models.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +39,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Build Database
-//        taskDatabase = Room.databaseBuilder(getApplicationContext(), TaskDatabase.class, DATABASE_INSTANCE_NAME)
-//                .allowMainThreadQueries()
-//                .build();
+        Amplify.API.query(
+                ModelQuery.list(Task.class),
+                success -> {
+                    List<Task> taskList = new ArrayList<>();
+                    for (Task task : success.getData()) {
+                        taskList.add(task);
+                        Log.i(TAG, "Succeeded read of Task: " + task.getTaskTitle());
+                    }
+                    runOnUiThread(() -> {
+                        taskListRecyclerViewAdapter.setTaskList(taskList);
+                        taskListRecyclerViewAdapter.notifyDataSetChanged();
+                    });
+                },
+                failure -> {
+                    Log.i(TAG, "Failed");
+                }
+        );
 
         // Set up RecyclerView and Layout Manager
         RecyclerView taskListRecyclerView = findViewById(R.id.taskListRecyclerView);
@@ -48,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Create list to hold tasks
         List<Task> taskList = new ArrayList<>();
-
 
         // Setup RecyclerViewAdapter
         taskListRecyclerViewAdapter = new TaskListRecyclerViewAdapter(this, taskList);
@@ -84,7 +99,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-//        List<Task> taskList2 = taskDatabase.taskDao().findAll();
+        Amplify.API.query(
+                ModelQuery.list(Task.class),
+                success -> {
+                    List<Task> taskList = new ArrayList<>();
+                    for (Task task : success.getData()) {
+                        taskList.add(task);
+                        Log.i(TAG, "Succeeded read of Task: " + task.getTaskTitle());
+                    }
+                    runOnUiThread(() -> {
+                        taskListRecyclerViewAdapter.setTaskList(taskList);
+                        taskListRecyclerViewAdapter.notifyDataSetChanged();
+                    });
+                },
+                failure -> {
+                    Log.i(TAG, "Failed");
+                }
+        );
+
         List<Task> taskList2 = new ArrayList<>();
         taskListRecyclerViewAdapter.setTaskList(taskList2);
         taskListRecyclerViewAdapter.notifyDataSetChanged();
