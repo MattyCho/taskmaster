@@ -46,6 +46,15 @@ A simple task managing app built for Android Studio practice. The app contains 3
 ### Changed
 - Task Status property has been changed to an enum instead of a string.
 
+### [1.0.4] - 2021-11-1
+### Added
+- Added an Espresso test to check that the two buttons properly load on the homepage.a
+- Added an Espresso test to check that buttons on the homepage lead to the correct activities.
+- Added an Espresso test to make sure that the settings activity properly updates the username on the homepage.
+
+### Removed
+- Removed Room and database storage to prepare for AWS Amplify.
+
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
 

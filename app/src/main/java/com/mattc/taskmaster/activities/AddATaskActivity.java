@@ -1,11 +1,7 @@
 package com.mattc.taskmaster.activities;
 
-import static com.mattc.taskmaster.activities.MainActivity.DATABASE_INSTANCE_NAME;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,29 +11,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mattc.taskmaster.R;
-import com.mattc.taskmaster.adapters.TaskListRecyclerViewAdapter;
-import com.mattc.taskmaster.database.TaskDatabase;
 import com.mattc.taskmaster.models.Task;
 import com.mattc.taskmaster.models.TaskStatusEnum;
 
 import java.util.Date;
-import java.util.List;
 
 public class AddATaskActivity extends AppCompatActivity {
-
-    TaskDatabase taskDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_atask);
-
-        taskDatabase = Room.databaseBuilder(getApplicationContext(), TaskDatabase.class, DATABASE_INSTANCE_NAME)
-                .allowMainThreadQueries()
-                .build();
+//
+//        taskDatabase = Room.databaseBuilder(getApplicationContext(), TaskDatabase.class, DATABASE_INSTANCE_NAME)
+//                .allowMainThreadQueries()
+//                .build();
 
         TextView totalTaskTextView = findViewById(R.id.totalTaskTextView);
-        totalTaskTextView.setText("Total Tasks: " + taskDatabase.taskDao().findAll().size());
+//        totalTaskTextView.setText("Total Tasks: " + taskDatabase.taskDao().findAll().size());
 
         // Spinner Stuff
         Spinner taskStatusSpinner = findViewById(R.id.taskStatusSpinner);
@@ -54,9 +45,10 @@ public class AddATaskActivity extends AppCompatActivity {
 
             Task newTask = new Task(taskTitleEditTextString, taskDescriptionEditTextString, new Date());
             newTask.taskStatus = taskStatus;
-            long newTaskId = taskDatabase.taskDao().insert(newTask);
+//            long newTaskId = taskDatabase.taskDao().insert(newTask);
+            long newTaskId = 0;
 
-            Toast.makeText(AddATaskActivity.this, "Shopping Item saved! Id: " + newTaskId, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(AddATaskActivity.this, "Shopping Item saved! Id: " + newTaskId, Toast.LENGTH_SHORT).show();
         });
     }
 
