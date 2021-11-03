@@ -1,4 +1,5 @@
 # taskmaster
+[APK v1.1 here](./app-debug.apk)
 
 ## Description
 A simple task managing app built for Android Studio practice. The app contains 3 pages:
@@ -56,6 +57,7 @@ A simple task managing app built for Android Studio practice. The app contains 3
 - Removed Room and database storage to prepare for AWS Amplify.
 
 ## [1.1.0] - 2021-11-2
+[APK v1.1 here](./app-debug.apk)
 ### Added
 - Implemented AWS Amplify and DynamoDB for cloud storage of task data.
 
