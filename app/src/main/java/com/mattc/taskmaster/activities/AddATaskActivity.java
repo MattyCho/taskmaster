@@ -12,13 +12,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amplifyframework.api.graphql.model.ModelMutation;
+import com.amplifyframework.api.graphql.model.ModelQuery;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.core.model.temporal.Temporal;
 import com.amplifyframework.datastore.generated.model.Task;
+import com.amplifyframework.datastore.generated.model.Team;
 import com.mattc.taskmaster.R;
 import com.mattc.taskmaster.models.TaskStatusEnum;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AddATaskActivity extends AppCompatActivity {
 
@@ -32,9 +36,30 @@ public class AddATaskActivity extends AppCompatActivity {
         // TODO: fix task counter
         TextView totalTaskTextView = findViewById(R.id.totalTaskTextView);
 
-        // Spinner Stuff
+        // Task Status Spinner
         Spinner taskStatusSpinner = findViewById(R.id.taskStatusSpinner);
         taskStatusSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, TaskStatusEnum.values()));
+
+        // Team Spinner
+        Spinner teamSpinner = findViewById(R.id.teamSpinner);
+        List<Team> teamList = new ArrayList<>();
+        Amplify.API.query(
+                ModelQuery.list(Team.class),
+                success -> {
+                    List<String> teamString = new ArrayList<>();
+                    for (Team team : success.getData()) {
+                        teamList.add(team);
+                        teamString.add(team.getTeamName());
+                        Log.i(TAG, "Successfully grabbed teams");
+                    }
+                    runOnUiThread(() -> {
+                        teamSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, teamString));
+                    });
+                },
+                failure -> {
+                    Log.i(TAG, "Failed");
+                }
+        );
 
         Button addTaskPageButton = (Button) findViewById(R.id.addTaskPageButton);
         addTaskPageButton.setOnClickListener(view -> {
@@ -44,16 +69,23 @@ public class AddATaskActivity extends AppCompatActivity {
             String taskTitleEditTextString = taskTitleEditText.getText().toString();
             String taskDescriptionEditTextString = taskDescriptionEditText.getText().toString();
             String taskStatus = taskStatusSpinner.getSelectedItem().toString();
+            String taskTeamName = teamSpinner.getSelectedItem().toString();
+            Team taskTeam = null;
+            for (Team team : teamList) {
+                if (taskTeamName.equals(team.getTeamName())) {
+                    taskTeam = team;
+                }
+            };
             String taskDateString = com.amazonaws.util.DateUtils.formatISO8601Date(new Date());
 
             // use builder to create new Task
             Task newTask = Task.builder()
+                    .team(taskTeam)
                     .taskTitle(taskTitleEditTextString)
                     .taskDescription(taskDescriptionEditTextString)
                     .taskStatus(taskStatus)
                     .taskDate(new Temporal.DateTime(taskDateString))
                     .build();
-
             Amplify.API.mutate(
                     ModelMutation.create(newTask),
                     success -> Log.i(TAG, "Succeeded"),
@@ -70,7 +102,6 @@ public class AddATaskActivity extends AppCompatActivity {
                 return i;
             }
         }
-
         return 0;
     }
 }

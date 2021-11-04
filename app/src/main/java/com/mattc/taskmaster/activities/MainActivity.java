@@ -16,9 +16,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amplifyframework.api.graphql.model.ModelMutation;
 import com.amplifyframework.api.graphql.model.ModelQuery;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.Task;
+import com.amplifyframework.datastore.generated.model.Team;
 import com.mattc.taskmaster.R;
 import com.mattc.taskmaster.adapters.TaskListRecyclerViewAdapter;
 
@@ -29,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     public final static String TAG = "mattyc_taskmaster_mainactivity";
     public final static String TASK_ID_EXTRA_STRING = "taskID";
-    public final static String DATABASE_INSTANCE_NAME = "mattyc_taskmaster_db";
     protected static SharedPreferences sharedPreferences;
     protected static Resources res;
     TaskListRecyclerViewAdapter taskListRecyclerViewAdapter;
@@ -38,6 +39,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Manual creation of three teams
+//        Team teamMystic = Team.builder()
+//                .teamName("Team Mystic")
+//                .build();
+//        Amplify.API.mutate(
+//                ModelMutation.create(teamMystic),
+//                success -> Log.i(TAG, "Succeeded in creating a team"),
+//                failure -> Log.i(TAG, "Failed to create a team")
+//        );
+//        Team teamValor = Team.builder()
+//                .teamName("Team Valor")
+//                .build();
+//        Amplify.API.mutate(
+//                ModelMutation.create(teamValor),
+//                success -> Log.i(TAG, "Succeeded in creating a team"),
+//                failure -> Log.i(TAG, "Failed to create a team")
+//        );
+//        Team teamInstinct = Team.builder()
+//                .teamName("Team Instinct")
+//                .build();
+//        Amplify.API.mutate(
+//                ModelMutation.create(teamInstinct),
+//                success -> Log.i(TAG, "Succeeded in creating a team"),
+//                failure -> Log.i(TAG, "Failed to create a team")
+//        );
 
         Amplify.API.query(
                 ModelQuery.list(Task.class),
