@@ -1,5 +1,6 @@
 package com.mattc.taskmaster.activities;
 
+import static com.mattc.taskmaster.activities.SettingsActivity.TEAMNAME_KEY;
 import static com.mattc.taskmaster.activities.SettingsActivity.USERNAME_KEY;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,7 +41,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Manual creation of three teams
+        // Grab sharedPreferences
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        res = getResources();
+
+//        Manual creation of three teams
 //        Team teamMystic = Team.builder()
 //                .teamName("Team Mystic")
 //                .build();
@@ -96,10 +101,6 @@ public class MainActivity extends AppCompatActivity {
         taskListRecyclerViewAdapter = new TaskListRecyclerViewAdapter(this, taskList);
         taskListRecyclerView.setAdapter(taskListRecyclerViewAdapter);
 
-        // Grab sharedPreferences
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        res = getResources();
-
         // Add Task Button
         Button addTaskButton = findViewById(R.id.addTaskButton);
         addTaskButton.setOnClickListener(view -> {
@@ -130,9 +131,12 @@ public class MainActivity extends AppCompatActivity {
                 ModelQuery.list(Task.class),
                 success -> {
                     List<Task> taskList = new ArrayList<>();
+                    String teamName = sharedPreferences.getString(TEAMNAME_KEY, "");
                     for (Task task : success.getData()) {
-                        taskList.add(task);
-                        Log.i(TAG, "Succeeded read of Task: " + task.getTaskTitle());
+                        if (!teamName.equals("") && teamName.equals(task.getTeam().getTeamName())) {
+                            taskList.add(task);
+                            Log.i(TAG, "Succeeded read of Task: " + task.getTaskTitle());
+                        }
                     }
                     runOnUiThread(() -> {
                         taskListRecyclerViewAdapter.setTaskList(taskList);
