@@ -50,7 +50,6 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         Task task = taskList.get(position);
         View taskFragment = holder.itemView;
         TextView taskFragmentTextView = taskFragment.findViewById(R.id.taskFragmentTextView);
-        // TODO: Change setText() to make it look nicer
         String taskString = "Task Title: " + task.getTaskTitle() +
                 "\nDate Added: " + task.getTaskDate() +
                 "\nTask Description: " + task.getTaskDescription() +

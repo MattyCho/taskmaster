@@ -1,14 +1,15 @@
-type Task @model {
+type Task @model
+@key(name: "teamAndTask", fields: ["teamId"]) {
     id: ID!
+    teamId: ID!
     taskTitle: String
     taskDescription: String
-    taskStatus: TaskStatusEnum
+    taskStatus: String
     taskDate: AWSDateTime
+    team: Team! @connection(fields: ["teamId"])
 }
-
-enum TaskStatusEnum {
-    NEW,
-    ASSIGNED,
-    IN_PROGRESS,
-    COMPLETE
+type Team @model {
+    id: ID!
+    teamName: String
+    tasks: [Task] @connection(keyName: "teamAndTask", fields: ["id"])
 }

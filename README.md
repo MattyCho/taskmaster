@@ -1,5 +1,5 @@
 # taskmaster
-[APK v1.1 here](./app-debug.apk)
+[APK v1.1.1 here](./app-debug.apk)
 
 ## Description
 A simple task managing app built for Android Studio practice. The app contains 3 pages:
@@ -57,13 +57,23 @@ A simple task managing app built for Android Studio practice. The app contains 3
 - Removed Room and database storage to prepare for AWS Amplify.
 
 ## [1.1.0] - 2021-11-2
-[APK v1.1 here](./app-debug.apk)
 ### Added
 - Implemented AWS Amplify and DynamoDB for cloud storage of task data.
 
 ## Changed
 - Reworked all database related code to use AWS Amplify instead of Room.
 - Task data now pulls information from DynamoDB.
+
+## [1.1.1 - 2021-11-3]
+[APK v1.1.1 here](./app-debug.apk)
+### Added
+- Team entity. Tasks now have a Team property.
+- Teams are stored to the database.
+- 3 Teams were manually created and then commented out so the program doesn't automatically keep making teams.
+
+### Changed
+- When adding a new task there is now a spinner to select which team that task belongs too.
+- Tasks and teams are connected by a One-To-Many relationship.
 
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
