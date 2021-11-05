@@ -1,11 +1,21 @@
 # taskmaster
-[APK v1.1.1 here](./app-debug.apk)
+[Initial Google Play Store Release v1.0 APK](./app/release/app-release.aab)
 
 ## Description
 A simple task managing app built for Android Studio practice. The app contains 3 pages:
-    - Homepage
-    - Add Task - This page includes a simple form for a task/description and submit button.
-    - All Tasks - Page to display all tasks.
+    - Homepage - Displays all tasks.
+    - Add Task - This page includes a simple form for creating a task and a submit button.
+    - All Tasks - Page only displays an image.
+    - Settings - Click the wrench in the bottom right corner. User can set a username and a team.
+
+## Release Process and Notes
+- Had to use an android emulator which was incredibly slow, crashed, and wouldn't let me sign in to my Google account.
+- Creating an account for Google Play Console was really easy.
+- On the other hand, creating a release for my app was incredibly time consuming. So many questions and their page layout is not the most intuitive.
+- I'm guessing if I make changes to my app from here on out, I have to create a new signed bundle and upload that to the Google Play Console.
+- Screenshots:
+![App Download Screen](screenshots/Download.png)
+![Release v1.0](screenshots/Release1.0.png)
 
 ## Changelog
 
@@ -64,8 +74,7 @@ A simple task managing app built for Android Studio practice. The app contains 3
 - Reworked all database related code to use AWS Amplify instead of Room.
 - Task data now pulls information from DynamoDB.
 
-## [1.1.1 - 2021-11-3]
-[APK v1.1.1 here](./app-debug.apk)
+## [1.1.1] - 2021-11-3
 ### Added
 - Team entity. Tasks now have a Team property.
 - Teams are stored to the database.
@@ -74,6 +83,15 @@ A simple task managing app built for Android Studio practice. The app contains 3
 ### Changed
 - When adding a new task there is now a spinner to select which team that task belongs too.
 - Tasks and teams are connected by a One-To-Many relationship.
+
+## [1.1.2] - 2021-11-4
+### Added
+- Filter Tasks by Team by going to the settings page and selecting a team.
+
+### Changed
+- Fixed DateTime format to look cleaner
+- Fixed Spinner values to normal strings (Not capitalized/enum values)
+- Settings page now includes a Team spinner.
 
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
