@@ -23,6 +23,8 @@ import com.mattc.taskmaster.models.TaskStatusEnum;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class AddATaskActivity extends AppCompatActivity {
 
@@ -33,45 +35,60 @@ public class AddATaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_atask);
 
-        // TODO: fix task counter
-        TextView totalTaskTextView = findViewById(R.id.totalTaskTextView);
-
         // Task Status Spinner
         Spinner taskStatusSpinner = findViewById(R.id.taskStatusSpinner);
         taskStatusSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, TaskStatusEnum.values()));
 
         // Team Spinner
-        Spinner teamSpinner = findViewById(R.id.teamSpinner);
-        List<Team> teamList = new ArrayList<>();
+        CompletableFuture<List<Team>> teamListCompletableFuture = new CompletableFuture<>();
         Amplify.API.query(
                 ModelQuery.list(Team.class),
                 success -> {
-                    List<String> teamString = new ArrayList<>();
+                    List<Team> teamList = new ArrayList<>();
                     for (Team team : success.getData()) {
                         teamList.add(team);
-                        teamString.add(team.getTeamName());
                         Log.i(TAG, "Successfully grabbed teams");
                     }
-                    runOnUiThread(() -> {
-                        teamSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, teamString));
-                    });
+                    teamListCompletableFuture.complete(teamList);
                 },
                 failure -> {
                     Log.i(TAG, "Failed");
+                    teamListCompletableFuture.complete(null);
                 }
         );
 
-        Button addTaskPageButton = (Button) findViewById(R.id.addTaskPageButton);
+        List<Team> teamList2 = null;
+        try {
+            teamList2 = teamListCompletableFuture.get();
+        } catch (InterruptedException ie) {
+            Log.i(TAG, "InterruptedException while getting business unit: " + ie.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        catch (ExecutionException ee)
+        {
+            Log.i(TAG, "ExecutionException while getting business unit:  " + ee.getMessage());
+        }
+
+        // Team Spinner
+        List<String> teamNamesString = new ArrayList<>();
+        for (Team team : teamList2) {
+            teamNamesString.add(team.getTeamName());
+        }
+        Spinner teamSpinner = findViewById(R.id.teamSpinner);
+        teamSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, teamNamesString));
+
+        Button addTaskPageButton = findViewById(R.id.addTaskPageButton);
+        List<Team> teamList3 = teamList2;
         addTaskPageButton.setOnClickListener(view -> {
 
             EditText taskTitleEditText = findViewById(R.id.taskTitleEditText);
             EditText taskDescriptionEditText = findViewById(R.id.taskDescriptionEditText);
             String taskTitleEditTextString = taskTitleEditText.getText().toString();
             String taskDescriptionEditTextString = taskDescriptionEditText.getText().toString();
-            String taskStatus = taskStatusSpinner.getSelectedItem().toString();
+            String taskStatus = TaskStatusEnum.fromString(taskStatusSpinner.getSelectedItem().toString()).toString();
             String taskTeamName = teamSpinner.getSelectedItem().toString();
             Team taskTeam = null;
-            for (Team team : teamList) {
+            for (Team team : teamList3) {
                 if (taskTeamName.equals(team.getTeamName())) {
                     taskTeam = team;
                 }
