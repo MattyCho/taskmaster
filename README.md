@@ -1,5 +1,6 @@
 # taskmaster
 [Initial Google Play Store Release v1.0 APK](./app/release/app-release.aab)
+[APK v1.1.2 here](./app-debug.apk)
 
 ## Description
 A simple task managing app built for Android Studio practice. The app contains 3 pages:
