@@ -84,6 +84,6 @@ A simple task managing app built for Android Studio practice. The app contains 3
 
 ![allTasks](screenshots/AllTasks.png)
 
-![taskDetails](screenshots/TaskDetails.png)
+![taskDetails](screenshots/TaskDetail.png)
 
 ![settings](screenshots/Settings.png)
