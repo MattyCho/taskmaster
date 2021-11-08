@@ -1,13 +1,14 @@
 # taskmaster
 [Initial Google Play Store Release v1.0 APK](./app/release/app-release.aab)
-[APK v1.1.2 here](./app-debug.apk)
+[APK v1.1.3 here](./app-debug.apk)
 
 ## Description
-A simple task managing app built for Android Studio practice. The app contains 3 pages:
+A simple task managing app built for Android Studio practice. The app features:
     - Homepage - Displays all tasks.
     - Add Task - This page includes a simple form for creating a task and a submit button.
     - All Tasks - Page only displays an image.
     - Settings - Click the wrench in the bottom right corner. User can set a username and a team.
+    - Login/Signup/Verify - User can create and verify an account using an email.
 
 ## Release Process and Notes
 - Had to use an android emulator which was incredibly slow, crashed, and wouldn't let me sign in to my Google account.
@@ -90,9 +91,15 @@ A simple task managing app built for Android Studio practice. The app contains 3
 - Filter Tasks by Team by going to the settings page and selecting a team.
 
 ### Changed
-- Fixed DateTime format to look cleaner
+- Fixed DateTime format to look cleaner.
 - Fixed Spinner values to normal strings (Not capitalized/enum values)
 - Settings page now includes a Team spinner.
+
+## [1.1.3] - 2021-11-8
+### Added
+- Implement Cognito.
+- Created 3 new Activities; Signup, Verify, and Login.
+- User can now signup a new account, verify their email, and login to access the app.
 
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
