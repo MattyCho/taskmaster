@@ -19,6 +19,9 @@ import android.widget.TextView;
 
 import com.amplifyframework.api.graphql.model.ModelMutation;
 import com.amplifyframework.api.graphql.model.ModelQuery;
+import com.amplifyframework.auth.AuthUser;
+import com.amplifyframework.auth.AuthUserAttributeKey;
+import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.Task;
 import com.amplifyframework.datastore.generated.model.Team;
@@ -41,9 +44,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        AuthUser currentUser = Amplify.Auth.getCurrentUser();
+        if (currentUser == null)
+        {
+            Intent goToLoginActivityIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(goToLoginActivityIntent);
+        }
+
         // Grab sharedPreferences
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         res = getResources();
+
+//        Logout User
+//        Amplify.Auth.signOut(
+//                () -> {Log.i(TAG, "Logout Succeeded");},
+//                failure -> {Log.i(TAG, "Logout Failed: " + failure.toString());}
+//        );
+
+        if (currentUser != null) {
+            String username = currentUser.getUsername();
+            Amplify.Auth.fetchUserAttributes(
+                    success -> {Log.i(TAG, "Fetch user attributes succeeded: " + success.toString());},
+                    failure -> {Log.i(TAG, "Fetch user attributes failed: " + failure.toString());});
+        }
 
 //        Manual creation of three teams
 //        Team teamMystic = Team.builder()
@@ -121,11 +144,32 @@ public class MainActivity extends AppCompatActivity {
             Intent settingsActivityIntent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(settingsActivityIntent);
         });
+
+        Button logoutButton = findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener( view -> {
+            Amplify.Auth.signOut(
+                    () -> {
+                        Log.i(TAG, "Logout Succeeded");
+                    },
+                    failure -> {
+                        Log.i(TAG, "Logout Failed: " + failure.toString());
+                    }
+            );
+            Intent goToLoginActivity = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(goToLoginActivity);
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        AuthUser currentUser = Amplify.Auth.getCurrentUser();
+        if (currentUser == null)
+        {
+            Intent goToLoginActivityIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(goToLoginActivityIntent);
+        }
 
         Amplify.API.query(
                 ModelQuery.list(Task.class),
@@ -133,7 +177,11 @@ public class MainActivity extends AppCompatActivity {
                     List<Task> taskList = new ArrayList<>();
                     String teamName = sharedPreferences.getString(TEAMNAME_KEY, "");
                     for (Task task : success.getData()) {
-                        if (!teamName.equals("") && teamName.equals(task.getTeam().getTeamName())) {
+                        if (teamName.equals("")) {
+                            taskList.add(task);
+                            Log.i(TAG, "Succeeded read of Task: " + task.getTaskTitle());
+                        }
+                        if (teamName.equals(task.getTeam().getTeamName())) {
                             taskList.add(task);
                             Log.i(TAG, "Succeeded read of Task: " + task.getTaskTitle());
                         }
