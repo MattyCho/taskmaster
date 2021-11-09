@@ -1,6 +1,6 @@
 # taskmaster
 [Initial Google Play Store Release v1.0 APK](./app/release/app-release.aab)
-[APK v1.1.3 here](./app-debug.apk)
+[APK v1.2.0 here](./app-debug.apk)
 
 ## Description
 A simple task managing app built for Android Studio practice. The app features:
@@ -100,6 +100,14 @@ A simple task managing app built for Android Studio practice. The app features:
 - Implement Cognito.
 - Created 3 new Activities; Signup, Verify, and Login.
 - User can now signup a new account, verify their email, and login to access the app.
+
+## [1.2.0] - 2021-11-9
+### Added
+- Implemented S3 for file storage.
+- Users can now pick an image file from their phone and upload it when creating a task.
+
+### Changed
+- Clicking on a task will now display the downloaded image from S3 along with the task information.
 
 ### Screenshots
 ![homepage](screenshots/Homepage.png)

@@ -19,6 +19,7 @@ mutation CreateTask(
       createdAt
       updatedAt
     }
+    taskImageKey
     createdAt
     updatedAt
   }
@@ -43,6 +44,7 @@ mutation UpdateTask(
       createdAt
       updatedAt
     }
+    taskImageKey
     createdAt
     updatedAt
   }
@@ -67,6 +69,7 @@ mutation DeleteTask(
       createdAt
       updatedAt
     }
+    taskImageKey
     createdAt
     updatedAt
   }
@@ -86,6 +89,7 @@ mutation CreateTeam(
         taskDescription
         taskStatus
         taskDate
+        taskImageKey
         createdAt
         updatedAt
       }
@@ -110,6 +114,7 @@ mutation UpdateTeam(
         taskDescription
         taskStatus
         taskDate
+        taskImageKey
         createdAt
         updatedAt
       }
@@ -134,6 +139,7 @@ mutation DeleteTeam(
         taskDescription
         taskStatus
         taskDate
+        taskImageKey
         createdAt
         updatedAt
       }

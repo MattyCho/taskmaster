@@ -16,6 +16,7 @@ query GetTask($id: ID!) {
       createdAt
       updatedAt
     }
+    taskImageKey
     createdAt
     updatedAt
   }
@@ -39,6 +40,7 @@ query ListTasks(
         createdAt
         updatedAt
       }
+      taskImageKey
       createdAt
       updatedAt
     }
@@ -57,6 +59,7 @@ query GetTeam($id: ID!) {
         taskDescription
         taskStatus
         taskDate
+        taskImageKey
         createdAt
         updatedAt
       }

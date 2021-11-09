@@ -7,6 +7,7 @@ type Task @model
     taskStatus: String
     taskDate: AWSDateTime
     team: Team! @connection(fields: ["teamId"])
+    taskImageKey: String
 }
 type Team @model {
     id: ID!
