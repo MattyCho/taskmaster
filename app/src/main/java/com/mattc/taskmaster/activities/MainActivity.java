@@ -3,15 +3,25 @@ package com.mattc.taskmaster.activities;
 import static com.mattc.taskmaster.activities.SettingsActivity.TEAMNAME_KEY;
 import static com.mattc.taskmaster.activities.SettingsActivity.USERNAME_KEY;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -28,6 +38,12 @@ import com.amplifyframework.datastore.generated.model.Team;
 import com.mattc.taskmaster.R;
 import com.mattc.taskmaster.adapters.TaskListRecyclerViewAdapter;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,27 +61,40 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         AuthUser currentUser = Amplify.Auth.getCurrentUser();
-        if (currentUser == null)
-        {
+        if (currentUser == null) {
             Intent goToLoginActivityIntent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(goToLoginActivityIntent);
         }
+
+//        Manually saving a test file to S3
+//        File testFile = new File(getApplicationContext().getFilesDir(), "testFileName");
+//
+//        try (BufferedWriter testFileBufferedWriter = new BufferedWriter(new FileWriter(testFile))){
+//            testFileBufferedWriter.append("this is a test");
+//        } catch (IOException ioe) {
+//            Log.i(TAG, "Error when writing test file: " + ioe.getMessage(), ioe);
+//        }
+//
+//        Amplify.Storage.uploadFile(
+//          "testFileKey",
+//                testFile,
+//                success -> {Log.i(TAG, "S3 test file upload was succeeded! Key is: " + success.getKey());},
+//                failure -> {Log.i(TAG, "S3 test file upload failed! " + failure.getMessage(), failure);}
+//        );
 
         // Grab sharedPreferences
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         res = getResources();
 
-//        Logout User
-//        Amplify.Auth.signOut(
-//                () -> {Log.i(TAG, "Logout Succeeded");},
-//                failure -> {Log.i(TAG, "Logout Failed: " + failure.toString());}
-//        );
-
         if (currentUser != null) {
             String username = currentUser.getUsername();
             Amplify.Auth.fetchUserAttributes(
-                    success -> {Log.i(TAG, "Fetch user attributes succeeded: " + success.toString());},
-                    failure -> {Log.i(TAG, "Fetch user attributes failed: " + failure.toString());});
+                    success -> {
+                        Log.i(TAG, "Fetch user attributes succeeded: " + success.toString());
+                    },
+                    failure -> {
+                        Log.i(TAG, "Fetch user attributes failed: " + failure.toString());
+                    });
         }
 
 //        Manual creation of three teams
@@ -94,23 +123,7 @@ public class MainActivity extends AppCompatActivity {
 //                failure -> Log.i(TAG, "Failed to create a team")
 //        );
 
-        Amplify.API.query(
-                ModelQuery.list(Task.class),
-                success -> {
-                    List<Task> taskList = new ArrayList<>();
-                    for (Task task : success.getData()) {
-                        taskList.add(task);
-                        Log.i(TAG, "Succeeded read of Task: " + task.getTaskTitle());
-                    }
-                    runOnUiThread(() -> {
-                        taskListRecyclerViewAdapter.setTaskList(taskList);
-                        taskListRecyclerViewAdapter.notifyDataSetChanged();
-                    });
-                },
-                failure -> {
-                    Log.i(TAG, "Failed");
-                }
-        );
+        getTaskList();
 
         // Set up RecyclerView and Layout Manager
         RecyclerView taskListRecyclerView = findViewById(R.id.taskListRecyclerView);
@@ -146,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button logoutButton = findViewById(R.id.logoutButton);
-        logoutButton.setOnClickListener( view -> {
+        logoutButton.setOnClickListener(view -> {
             Amplify.Auth.signOut(
                     () -> {
                         Log.i(TAG, "Logout Succeeded");
@@ -160,17 +173,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        AuthUser currentUser = Amplify.Auth.getCurrentUser();
-        if (currentUser == null)
-        {
-            Intent goToLoginActivityIntent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(goToLoginActivityIntent);
-        }
-
+    protected void getTaskList() {
         Amplify.API.query(
                 ModelQuery.list(Task.class),
                 success -> {
@@ -195,10 +198,19 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "Failed");
                 }
         );
+    }
 
-        List<Task> taskList2 = new ArrayList<>();
-        taskListRecyclerViewAdapter.setTaskList(taskList2);
-        taskListRecyclerViewAdapter.notifyDataSetChanged();
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        AuthUser currentUser = Amplify.Auth.getCurrentUser();
+        if (currentUser == null) {
+            Intent goToLoginActivityIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(goToLoginActivityIntent);
+        }
+
+        getTaskList();
 
         // Grabs username from sharedPreferences
         String username = sharedPreferences.getString(USERNAME_KEY, "");

@@ -3,8 +3,10 @@ package com.mattc.taskmaster.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amplifyframework.api.graphql.model.ModelQuery;
@@ -12,6 +14,7 @@ import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.Task;
 import com.mattc.taskmaster.R;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,6 +47,8 @@ public class TaskDetailActivity extends AppCompatActivity {
                         }
                         Log.i(TAG, "Succeeded read of Task: " + task.getTaskTitle());
                     }
+                    getImageFileFromS3AndSetImageView(thisTask.getTaskImageKey());
+
                     Task thisTask2 = thisTask;
                     runOnUiThread(() -> {
                         TextView taskTitleTextView = findViewById(R.id.taskTitleTextView);
@@ -79,5 +84,24 @@ public class TaskDetailActivity extends AppCompatActivity {
                     Log.i(TAG, "Failed");
                 }
         );
+    }
+
+    protected void getImageFileFromS3AndSetImageView(String s3ImageKey) {
+        if (s3ImageKey != null) {
+            Amplify.Storage.downloadFile(
+                    s3ImageKey,
+                    new File(getApplicationContext().getFilesDir(), s3ImageKey),
+                    success -> {
+                        Log.i(TAG, "Image download succesfully from S3 with name: " + success.getFile().getName());
+                        runOnUiThread( () -> {
+                            ImageView taskImageView = findViewById(R.id.taskImageView);
+                            taskImageView.setImageBitmap(BitmapFactory.decodeFile(success.getFile().getPath()));
+                        });
+                    },
+                    failure -> {
+                        Log.e(TAG, "Failed to download image from S3! Key is: " + s3ImageKey + " with error: " + failure.getMessage(), failure);
+                    }
+            );
+        }
     }
 }
