@@ -31,4 +31,6 @@
     <string name="verificationCode">Verification Code</string>
     <string name="logout">Logout</string>
     <string name="signUpHere">Sign Up Here</string>
+    <string name="selectImage">Select Image</string>
+    <string name="taskOwner">Task Owner</string>
 </resources>

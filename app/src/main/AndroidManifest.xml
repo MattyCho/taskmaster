@@ -30,7 +30,18 @@
             android:exported="false" />
         <activity
             android:name=".activities.AddATaskActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter android:label="Task Image">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter android:label="Task Text">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.MainActivity"
             android:exported="true">
