@@ -55,6 +55,7 @@ public class TaskDetailActivity extends AppCompatActivity {
                         TextView taskDescriptionTextView = findViewById(R.id.taskDescriptionTextView);
                         TextView taskStatusTextView = findViewById(R.id.taskStatusTextView);
                         TextView taskDateTextView = findViewById(R.id.taskDateTextView);
+                        TextView taskOwnerTextView = findViewById(R.id.taskOwnerTextView);
 
                         DateFormat localIso8601InputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
                         localIso8601InputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -78,6 +79,7 @@ public class TaskDetailActivity extends AppCompatActivity {
                         taskDescriptionTextView.setText(thisTask2.getTaskDescription());
                         taskStatusTextView.setText(thisTask2.getTaskStatus());
                         taskDateTextView.setText(timeAddedString);
+                        taskOwnerTextView.setText(thisTask2.getTeam().getTeamName());
                     });
                 },
                 failure -> {

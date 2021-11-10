@@ -109,6 +109,17 @@ A simple task managing app built for Android Studio practice. The app features:
 ### Changed
 - Clicking on a task will now display the downloaded image from S3 along with the task information.
 
+## [1.2.1] - 2021-11-20
+### Added
+- Implemented Intent Filters
+- User can now share text and images from other apps to taskmaster to create a new task.
+
+### Changed
+- Refactored some methods to accommodate intent filtering and image selecting.
+- Task details now display the team that owns that task.
+- Creating a new task now requires you to select an image from the file picker or from an intent filter from outside the app.
+- When creating a new task, an image preview will display which image has been selected for the task.
+
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
 

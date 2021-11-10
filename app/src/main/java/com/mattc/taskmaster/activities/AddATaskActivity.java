@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -48,10 +50,35 @@ public class AddATaskActivity extends AppCompatActivity {
     String taskStatus;
     String taskDateString;
 
+    Uri pickedImageFileUri;
+    String pickedImageFilename;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_atask);
+
+        Intent intent = getIntent();
+
+        String taskTextFromOtherApplication = "";
+
+        if ((intent.getType() != null) && (intent.getType().equals("text/plain"))) {
+            taskTextFromOtherApplication = intent.getStringExtra(Intent.EXTRA_TEXT);
+        }
+        if ((intent.getType() != null) && (intent.getType().startsWith("image/"))) {
+            Uri incomingFileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            if (incomingFileUri != null) {
+                try {
+                    pickedImageFileUri = incomingFileUri;
+                    pickedImageFilename = getFilenameFromUri(incomingFileUri);
+                    InputStream incomingImageFileInputStream = getContentResolver().openInputStream(incomingFileUri);
+                    ImageView addTaskImageView = findViewById(R.id.addTaskImageView);
+                    addTaskImageView.setImageBitmap(BitmapFactory.decodeStream(incomingImageFileInputStream));
+                } catch (FileNotFoundException fnfe) {
+                    Log.e(TAG, "Could not get input stream from intent uri" + fnfe.getMessage(), fnfe);
+                }
+            }
+        }
 
         activityResultLauncher = getImagePickingActivityResultLauncher();
 
@@ -97,11 +124,20 @@ public class AddATaskActivity extends AppCompatActivity {
         Spinner teamSpinner = findViewById(R.id.teamSpinner);
         teamSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, teamNamesString));
 
+        EditText taskTitleEditText = findViewById(R.id.taskTitleEditText);
+        if (taskTextFromOtherApplication != "") {
+            taskTitleEditText.setText(taskTextFromOtherApplication);
+        }
+
+        Button selectImageButton = findViewById(R.id.selectImageButton);
+        selectImageButton.setOnClickListener( onClick -> {
+            selectImage();
+        });
+
         Button addTaskPageButton = findViewById(R.id.addTaskPageButton);
         List<Team> teamList3 = teamList2;
         addTaskPageButton.setOnClickListener(view -> {
 
-            EditText taskTitleEditText = findViewById(R.id.taskTitleEditText);
             EditText taskDescriptionEditText = findViewById(R.id.taskDescriptionEditText);
             taskTitleEditTextString = taskTitleEditText.getText().toString();
             taskDescriptionEditTextString = taskDescriptionEditText.getText().toString();
@@ -128,7 +164,7 @@ public class AddATaskActivity extends AppCompatActivity {
     }
 
     // Intent to grab an image file using a file picker
-    protected void saveToS3AndDb() {
+    protected void selectImage() {
         Intent imageFilePickingIntent = new Intent(Intent.ACTION_GET_CONTENT);
         imageFilePickingIntent.setType("*/*");
         imageFilePickingIntent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/jpeg", "image/png", "image/gif"});
@@ -144,14 +180,14 @@ public class AddATaskActivity extends AppCompatActivity {
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             if (result.getData() != null) {
-                                Uri pickedImageFileUri = result.getData().getData();
+                                pickedImageFileUri = result.getData().getData();
 
                                 try {
                                     InputStream pickedImageInputStream = getContentResolver().openInputStream(pickedImageFileUri);
-                                    String pickedImageFilename = getFilenameFromUri(pickedImageFileUri);
+                                    pickedImageFilename = getFilenameFromUri(pickedImageFileUri);
+                                    ImageView addTaskImageView = findViewById(R.id.addTaskImageView);
+                                    addTaskImageView.setImageBitmap(BitmapFactory.decodeStream(pickedImageInputStream));
                                     Log.i(TAG, "Succeeded in getting input stream from file on phone! Filename is: " + pickedImageFilename);
-                                    // upload InputStream to S3
-                                    uploadInputStreamToS3(pickedImageInputStream, pickedImageFilename);
                                 } catch (FileNotFoundException fnfe) {
                                     Log.e(TAG, "Could not get file from file picker!" + fnfe.getMessage(), fnfe);
                                 }
@@ -184,6 +220,22 @@ public class AddATaskActivity extends AppCompatActivity {
             }
         }
         return result;
+    }
+
+    protected void saveToS3AndDb() {
+        if (pickedImageFilename == null) {
+            runOnUiThread(() -> {
+                Toast.makeText(AddATaskActivity.this, "Please select an image before submitting", Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            InputStream pickedImageInputStream = null;
+            try {
+                pickedImageInputStream = getContentResolver().openInputStream(pickedImageFileUri);
+            } catch (FileNotFoundException fnfe) {
+                Log.e(TAG, "Could not get input stream from preview image! " + fnfe.getMessage(), fnfe);
+            }
+            uploadInputStreamToS3(pickedImageInputStream, pickedImageFilename);
+        }
     }
 
     protected void uploadInputStreamToS3(InputStream pickedImageFileInputStream, String pickedImageFilename) {
