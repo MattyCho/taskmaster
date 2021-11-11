@@ -120,6 +120,14 @@ A simple task managing app built for Android Studio practice. The app features:
 - Creating a new task now requires you to select an image from the file picker or from an intent filter from outside the app.
 - When creating a new task, an image preview will display which image has been selected for the task.
 
+## [1.2.2] - 2021-11-11
+### Added
+- Implemented Location data for each new task.
+- Tasks now include a latitude, longitude, and a city which will all save to the database.
+
+### Changed
+- Task detail page now displays the tasks latitude, longitude, and city.
+
 ### Screenshots
 ![homepage](screenshots/Homepage.png)
 
