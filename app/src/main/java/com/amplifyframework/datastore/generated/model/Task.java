@@ -29,6 +29,9 @@ public final class Task implements Model {
   public static final QueryField TASK_DATE = field("Task", "taskDate");
   public static final QueryField TEAM = field("Task", "teamId");
   public static final QueryField TASK_IMAGE_KEY = field("Task", "taskImageKey");
+  public static final QueryField TASK_LATITUDE = field("Task", "taskLatitude");
+  public static final QueryField TASK_LONGITUDE = field("Task", "taskLongitude");
+  public static final QueryField TASK_CITY = field("Task", "taskCity");
   private final @ModelField(targetType="ID", isRequired = true) String id;
   private final @ModelField(targetType="String") String taskTitle;
   private final @ModelField(targetType="String") String taskDescription;
@@ -36,6 +39,9 @@ public final class Task implements Model {
   private final @ModelField(targetType="AWSDateTime") Temporal.DateTime taskDate;
   private final @ModelField(targetType="Team", isRequired = true) @BelongsTo(targetName = "teamId", type = Team.class) Team team;
   private final @ModelField(targetType="String") String taskImageKey;
+  private final @ModelField(targetType="String") String taskLatitude;
+  private final @ModelField(targetType="String") String taskLongitude;
+  private final @ModelField(targetType="String") String taskCity;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime createdAt;
   private @ModelField(targetType="AWSDateTime", isReadOnly = true) Temporal.DateTime updatedAt;
   public String getId() {
@@ -66,6 +72,18 @@ public final class Task implements Model {
       return taskImageKey;
   }
   
+  public String getTaskLatitude() {
+      return taskLatitude;
+  }
+  
+  public String getTaskLongitude() {
+      return taskLongitude;
+  }
+  
+  public String getTaskCity() {
+      return taskCity;
+  }
+  
   public Temporal.DateTime getCreatedAt() {
       return createdAt;
   }
@@ -74,7 +92,7 @@ public final class Task implements Model {
       return updatedAt;
   }
   
-  private Task(String id, String taskTitle, String taskDescription, String taskStatus, Temporal.DateTime taskDate, Team team, String taskImageKey) {
+  private Task(String id, String taskTitle, String taskDescription, String taskStatus, Temporal.DateTime taskDate, Team team, String taskImageKey, String taskLatitude, String taskLongitude, String taskCity) {
     this.id = id;
     this.taskTitle = taskTitle;
     this.taskDescription = taskDescription;
@@ -82,6 +100,9 @@ public final class Task implements Model {
     this.taskDate = taskDate;
     this.team = team;
     this.taskImageKey = taskImageKey;
+    this.taskLatitude = taskLatitude;
+    this.taskLongitude = taskLongitude;
+    this.taskCity = taskCity;
   }
   
   @Override
@@ -99,6 +120,9 @@ public final class Task implements Model {
               ObjectsCompat.equals(getTaskDate(), task.getTaskDate()) &&
               ObjectsCompat.equals(getTeam(), task.getTeam()) &&
               ObjectsCompat.equals(getTaskImageKey(), task.getTaskImageKey()) &&
+              ObjectsCompat.equals(getTaskLatitude(), task.getTaskLatitude()) &&
+              ObjectsCompat.equals(getTaskLongitude(), task.getTaskLongitude()) &&
+              ObjectsCompat.equals(getTaskCity(), task.getTaskCity()) &&
               ObjectsCompat.equals(getCreatedAt(), task.getCreatedAt()) &&
               ObjectsCompat.equals(getUpdatedAt(), task.getUpdatedAt());
       }
@@ -114,6 +138,9 @@ public final class Task implements Model {
       .append(getTaskDate())
       .append(getTeam())
       .append(getTaskImageKey())
+      .append(getTaskLatitude())
+      .append(getTaskLongitude())
+      .append(getTaskCity())
       .append(getCreatedAt())
       .append(getUpdatedAt())
       .toString()
@@ -131,6 +158,9 @@ public final class Task implements Model {
       .append("taskDate=" + String.valueOf(getTaskDate()) + ", ")
       .append("team=" + String.valueOf(getTeam()) + ", ")
       .append("taskImageKey=" + String.valueOf(getTaskImageKey()) + ", ")
+      .append("taskLatitude=" + String.valueOf(getTaskLatitude()) + ", ")
+      .append("taskLongitude=" + String.valueOf(getTaskLongitude()) + ", ")
+      .append("taskCity=" + String.valueOf(getTaskCity()) + ", ")
       .append("createdAt=" + String.valueOf(getCreatedAt()) + ", ")
       .append("updatedAt=" + String.valueOf(getUpdatedAt()))
       .append("}")
@@ -157,6 +187,9 @@ public final class Task implements Model {
       null,
       null,
       null,
+      null,
+      null,
+      null,
       null
     );
   }
@@ -168,7 +201,10 @@ public final class Task implements Model {
       taskStatus,
       taskDate,
       team,
-      taskImageKey);
+      taskImageKey,
+      taskLatitude,
+      taskLongitude,
+      taskCity);
   }
   public interface TeamStep {
     BuildStep team(Team team);
@@ -183,6 +219,9 @@ public final class Task implements Model {
     BuildStep taskStatus(String taskStatus);
     BuildStep taskDate(Temporal.DateTime taskDate);
     BuildStep taskImageKey(String taskImageKey);
+    BuildStep taskLatitude(String taskLatitude);
+    BuildStep taskLongitude(String taskLongitude);
+    BuildStep taskCity(String taskCity);
   }
   
 
@@ -194,6 +233,9 @@ public final class Task implements Model {
     private String taskStatus;
     private Temporal.DateTime taskDate;
     private String taskImageKey;
+    private String taskLatitude;
+    private String taskLongitude;
+    private String taskCity;
     @Override
      public Task build() {
         String id = this.id != null ? this.id : UUID.randomUUID().toString();
@@ -205,7 +247,10 @@ public final class Task implements Model {
           taskStatus,
           taskDate,
           team,
-          taskImageKey);
+          taskImageKey,
+          taskLatitude,
+          taskLongitude,
+          taskCity);
     }
     
     @Override
@@ -245,6 +290,24 @@ public final class Task implements Model {
         return this;
     }
     
+    @Override
+     public BuildStep taskLatitude(String taskLatitude) {
+        this.taskLatitude = taskLatitude;
+        return this;
+    }
+    
+    @Override
+     public BuildStep taskLongitude(String taskLongitude) {
+        this.taskLongitude = taskLongitude;
+        return this;
+    }
+    
+    @Override
+     public BuildStep taskCity(String taskCity) {
+        this.taskCity = taskCity;
+        return this;
+    }
+    
     /** 
      * @param id id
      * @return Current Builder instance, for fluent method chaining
@@ -257,14 +320,17 @@ public final class Task implements Model {
   
 
   public final class CopyOfBuilder extends Builder {
-    private CopyOfBuilder(String id, String taskTitle, String taskDescription, String taskStatus, Temporal.DateTime taskDate, Team team, String taskImageKey) {
+    private CopyOfBuilder(String id, String taskTitle, String taskDescription, String taskStatus, Temporal.DateTime taskDate, Team team, String taskImageKey, String taskLatitude, String taskLongitude, String taskCity) {
       super.id(id);
       super.team(team)
         .taskTitle(taskTitle)
         .taskDescription(taskDescription)
         .taskStatus(taskStatus)
         .taskDate(taskDate)
-        .taskImageKey(taskImageKey);
+        .taskImageKey(taskImageKey)
+        .taskLatitude(taskLatitude)
+        .taskLongitude(taskLongitude)
+        .taskCity(taskCity);
     }
     
     @Override
@@ -295,6 +361,21 @@ public final class Task implements Model {
     @Override
      public CopyOfBuilder taskImageKey(String taskImageKey) {
       return (CopyOfBuilder) super.taskImageKey(taskImageKey);
+    }
+    
+    @Override
+     public CopyOfBuilder taskLatitude(String taskLatitude) {
+      return (CopyOfBuilder) super.taskLatitude(taskLatitude);
+    }
+    
+    @Override
+     public CopyOfBuilder taskLongitude(String taskLongitude) {
+      return (CopyOfBuilder) super.taskLongitude(taskLongitude);
+    }
+    
+    @Override
+     public CopyOfBuilder taskCity(String taskCity) {
+      return (CopyOfBuilder) super.taskCity(taskCity);
     }
   }
   

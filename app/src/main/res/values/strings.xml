@@ -33,4 +33,7 @@
     <string name="signUpHere">Sign Up Here</string>
     <string name="selectImage">Select Image</string>
     <string name="taskOwner">Task Owner</string>
+    <string name="taskLatitude">Task Latitude</string>
+    <string name="taskLongitude">Task Longitude</string>
+    <string name="taskCity">Task City</string>
 </resources>
