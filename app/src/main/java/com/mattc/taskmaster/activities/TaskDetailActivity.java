@@ -1,8 +1,12 @@
 package com.mattc.taskmaster.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +16,11 @@ import android.widget.TextView;
 import com.amplifyframework.api.graphql.model.ModelQuery;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.Task;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.CancellationToken;
+import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.mattc.taskmaster.R;
 
 import java.io.File;
@@ -56,6 +65,9 @@ public class TaskDetailActivity extends AppCompatActivity {
                         TextView taskStatusTextView = findViewById(R.id.taskStatusTextView);
                         TextView taskDateTextView = findViewById(R.id.taskDateTextView);
                         TextView taskOwnerTextView = findViewById(R.id.taskOwnerTextView);
+                        TextView taskLatitudeTextView = findViewById(R.id.taskLatitudeTextView);
+                        TextView taskLongitudeTextView = findViewById(R.id.taskLongitudeTextView);
+                        TextView taskCityTextView = findViewById(R.id.taskCityTextView);
 
                         DateFormat localIso8601InputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
                         localIso8601InputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -80,6 +92,9 @@ public class TaskDetailActivity extends AppCompatActivity {
                         taskStatusTextView.setText(thisTask2.getTaskStatus());
                         taskDateTextView.setText(timeAddedString);
                         taskOwnerTextView.setText(thisTask2.getTeam().getTeamName());
+                        taskLatitudeTextView.setText(thisTask2.getTaskLatitude());
+                        taskLongitudeTextView.setText(thisTask2.getTaskLongitude());
+                        taskCityTextView.setText(thisTask2.getTaskCity());
                     });
                 },
                 failure -> {

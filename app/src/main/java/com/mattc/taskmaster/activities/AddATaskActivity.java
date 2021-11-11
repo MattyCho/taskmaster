@@ -4,13 +4,19 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -28,20 +34,34 @@ import com.amplifyframework.core.Amplify;
 import com.amplifyframework.core.model.temporal.Temporal;
 import com.amplifyframework.datastore.generated.model.Task;
 import com.amplifyframework.datastore.generated.model.Team;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.CancellationToken;
+import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.mattc.taskmaster.R;
 import com.mattc.taskmaster.models.TaskStatusEnum;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class AddATaskActivity extends AppCompatActivity {
 
     public final static String TAG = "mattyc_taskmaster_addataskactivity";
+    public final static int GET_FINE_LOCATION_PERMISSION_CODE = 1;
+    FusedLocationProviderClient fusedLocationProviderClient;
+    Geocoder geocoder;
+
+    String taskLatitude = "";
+    String taskLongitude = "";
+    String taskCity = "Unknown City";
     ActivityResultLauncher<Intent> activityResultLauncher;
 
     Team taskTeam;
@@ -152,6 +172,47 @@ public class AddATaskActivity extends AppCompatActivity {
 
             saveToS3AndDb();
         });
+
+        // Request location permission
+        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, GET_FINE_LOCATION_PERMISSION_CODE);
+        // set up fusedLocationProviderClient
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+        // Bonus Geocoder
+        geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationProviderClient.flushLocations();
+        // actually get the location
+        fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+            @Override
+            public boolean isCancellationRequested() {
+                return false;
+            }
+
+            @NonNull
+            @Override
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                return null;
+            }
+        }).addOnSuccessListener(location -> {
+            Log.i(TAG, "Our latitude: " + location.getLatitude());
+            taskLatitude = Double.toString(location.getLatitude());
+            Log.i(TAG, "Our longitude: " + location.getLongitude());
+            taskLongitude = Double.toString(location.getLongitude());
+
+            try {
+                List<Address> addressGuesses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                Address bestAddressGuess = addressGuesses.get(0);
+                taskCity = bestAddressGuess.getLocality();
+            } catch (IOException ioe) {
+                Log.e(TAG, "Failed grabbing city from geocoder: " + ioe.getMessage(), ioe);
+            }
+        });
+//        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
+//            Log.i(TAG, "Our latitude: " + location.getLatitude());
+//            Log.i(TAG, "Our longitude: " + location.getLongitude());
+//        });
     }
 
     private int getSpinnerIndex(Spinner spinner, String stringValueToCheck){
@@ -261,6 +322,9 @@ public class AddATaskActivity extends AppCompatActivity {
                 .taskStatus(taskStatus)
                 .taskDate(new Temporal.DateTime(taskDateString))
                 .taskImageKey(awsImageKey)
+                .taskLatitude(taskLatitude)
+                .taskLongitude(taskLongitude)
+                .taskCity(taskCity)
                 .build();
         Amplify.API.mutate(
                 ModelMutation.create(newTask),

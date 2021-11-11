@@ -8,14 +8,18 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -35,6 +39,11 @@ import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.Task;
 import com.amplifyframework.datastore.generated.model.Team;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.CancellationToken;
+import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.mattc.taskmaster.R;
 import com.mattc.taskmaster.adapters.TaskListRecyclerViewAdapter;
 
@@ -66,22 +75,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(goToLoginActivityIntent);
         }
 
-//        Manually saving a test file to S3
-//        File testFile = new File(getApplicationContext().getFilesDir(), "testFileName");
-//
-//        try (BufferedWriter testFileBufferedWriter = new BufferedWriter(new FileWriter(testFile))){
-//            testFileBufferedWriter.append("this is a test");
-//        } catch (IOException ioe) {
-//            Log.i(TAG, "Error when writing test file: " + ioe.getMessage(), ioe);
-//        }
-//
-//        Amplify.Storage.uploadFile(
-//          "testFileKey",
-//                testFile,
-//                success -> {Log.i(TAG, "S3 test file upload was succeeded! Key is: " + success.getKey());},
-//                failure -> {Log.i(TAG, "S3 test file upload failed! " + failure.getMessage(), failure);}
-//        );
-
         // Grab sharedPreferences
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         res = getResources();
@@ -97,28 +90,12 @@ public class MainActivity extends AppCompatActivity {
                     });
         }
 
-//        Manual creation of three teams
+//        Manual creation of a team
 //        Team teamMystic = Team.builder()
 //                .teamName("Team Mystic")
 //                .build();
 //        Amplify.API.mutate(
 //                ModelMutation.create(teamMystic),
-//                success -> Log.i(TAG, "Succeeded in creating a team"),
-//                failure -> Log.i(TAG, "Failed to create a team")
-//        );
-//        Team teamValor = Team.builder()
-//                .teamName("Team Valor")
-//                .build();
-//        Amplify.API.mutate(
-//                ModelMutation.create(teamValor),
-//                success -> Log.i(TAG, "Succeeded in creating a team"),
-//                failure -> Log.i(TAG, "Failed to create a team")
-//        );
-//        Team teamInstinct = Team.builder()
-//                .teamName("Team Instinct")
-//                .build();
-//        Amplify.API.mutate(
-//                ModelMutation.create(teamInstinct),
 //                success -> Log.i(TAG, "Succeeded in creating a team"),
 //                failure -> Log.i(TAG, "Failed to create a team")
 //        );

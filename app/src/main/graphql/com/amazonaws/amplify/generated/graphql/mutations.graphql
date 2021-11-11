@@ -20,6 +20,9 @@ mutation CreateTask(
       updatedAt
     }
     taskImageKey
+    taskLatitude
+    taskLongitude
+    taskCity
     createdAt
     updatedAt
   }
@@ -45,6 +48,9 @@ mutation UpdateTask(
       updatedAt
     }
     taskImageKey
+    taskLatitude
+    taskLongitude
+    taskCity
     createdAt
     updatedAt
   }
@@ -70,6 +76,9 @@ mutation DeleteTask(
       updatedAt
     }
     taskImageKey
+    taskLatitude
+    taskLongitude
+    taskCity
     createdAt
     updatedAt
   }
@@ -90,6 +99,9 @@ mutation CreateTeam(
         taskStatus
         taskDate
         taskImageKey
+        taskLatitude
+        taskLongitude
+        taskCity
         createdAt
         updatedAt
       }
@@ -115,6 +127,9 @@ mutation UpdateTeam(
         taskStatus
         taskDate
         taskImageKey
+        taskLatitude
+        taskLongitude
+        taskCity
         createdAt
         updatedAt
       }
@@ -140,6 +155,9 @@ mutation DeleteTeam(
         taskStatus
         taskDate
         taskImageKey
+        taskLatitude
+        taskLongitude
+        taskCity
         createdAt
         updatedAt
       }
